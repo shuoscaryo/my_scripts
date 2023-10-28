@@ -3,7 +3,7 @@ NAME := replace_src
 CC := c++
 CFLAGS := -Wall -Wextra -Werror
 
-SRC := replace_src.cpp
+SRC :=
 
 all: $(NAME)
 
@@ -12,6 +12,8 @@ $(NAME):
 
 clean:
 	@rm -rf $(NAME)
+
+fclean: clean
 
 re: clean all
 

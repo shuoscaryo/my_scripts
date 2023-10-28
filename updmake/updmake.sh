@@ -6,6 +6,8 @@ else
 	file_dir=$(pwd)
 fi
 
+curr_dir=$(dirname $0)
+echo $curr_dir
 files=$(find $file_dir -type f -regex ".*\.\(c\|cpp\)$" | sed "s|$file_dir/||g")
 
 echo "new files:"
@@ -13,6 +15,6 @@ for i in $files; do
 	echo -e "\t$i"
 done
 
-make -C $HOME/scripts/updmake > /dev/null 2>&1
+make -C $curr_dir > /dev/null 2>&1
 echo "Replacing src in Makefile"
-$HOME/scripts/updmake/replace_src $files
+$curr_dir/replace_src $files
