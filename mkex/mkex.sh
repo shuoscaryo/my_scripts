@@ -5,7 +5,7 @@ if [ $# -ne 1 ]; then
 	exit 1
 fi
 
-script_dir=$(dirname $0)
+script_dir=$(dirname $(readlink "$0"))
 
 for ((i=0; i<=$1; i++)); do
 	mkdir -p "ex0$i"
