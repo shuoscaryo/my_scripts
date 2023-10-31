@@ -20,6 +20,7 @@ class $i
 		$i(const $i & src);
 		~$i(void);
 		$i & operator=(const $i & rhs);
+	protected:
 	private:
 };" >> "$name"
 	fi
