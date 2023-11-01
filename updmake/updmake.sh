@@ -7,7 +7,6 @@ else
 fi
 
 curr_dir=$(dirname $0)
-echo $curr_dir
 files=$(find $file_dir -type f -regex ".*\.\(c\|cpp\)$" | sed "s|$file_dir/||g")
 
 echo "new files:"

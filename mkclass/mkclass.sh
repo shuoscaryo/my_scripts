@@ -48,6 +48,10 @@ $i::~$i(void)
 
 $i & $i::operator=(const $i & rhs)
 {
+	if (this != &rhs)
+	{
+		// copy
+	}
 	return (*this);
 }" >> "$name2"
 
