@@ -15,8 +15,6 @@ else
 	cd - > /dev/null 2>&1
 fi
 
-echo $script_dir
-
 files=$(find $file_dir -type f -regex ".*\.\(c\|cpp\)$" | sed "s|$file_dir/||g")
 
 echo "new files:"
