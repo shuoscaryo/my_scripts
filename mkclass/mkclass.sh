@@ -6,6 +6,7 @@ for i in "$@"; do
 	else
 		name="$i.hpp"
 	fi
+	classname=${name%.hpp}
 	if [[ -f "$name" ]]; then
 		echo "file $name already exists"
 	else
@@ -13,13 +14,14 @@ for i in "$@"; do
 		touch "$name"
 		echo "#pragma once
 
-class $i
+class $classname
 {
 	public:
-		$i(void);
-		$i(const $i & src);
-		~$i(void);
-		$i & operator=(const $i & rhs);
+		$classname(void);
+		$classname(const $classname & src);
+		~$classname(void);
+		$classname & operator=(const $classname & rhs);
+	protected:
 	private:
 };" >> "$name"
 	fi
@@ -32,21 +34,25 @@ class $i
 	touch "$name2"
 	echo "#include \"$name\"
 
-$i::$i(void)
+$classname::$classname(void)
 {
 }
 
-$i::$i(const $i & src)
+$classname::$classname(const $classname & src)
 {
 	*this = src;
 }
 
-$i::~$i(void)
+$classname::~$classname(void)
 {
 }
 
-$i & $i::operator=(const $i & rhs)
+$classname & $classname::operator=(const $classname & rhs)
 {
+	if (this != &rhs)
+	{
+		// copy
+	}
 	return (*this);
 }" >> "$name2"
 
