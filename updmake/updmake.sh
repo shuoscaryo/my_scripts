@@ -1,8 +1,9 @@
 #!/bin/bash
 
 if [ $# -ge 1 ]; then
-	file_dir=$(cd $1; pwd)
-	cd -
+	cd $1
+	file_dir=$(pwd)
+	cd - > /dev/null 2>&1
 else
 	file_dir=$(pwd)
 fi
@@ -15,7 +16,7 @@ else
 	cd - > /dev/null 2>&1
 fi
 
-files=$(find $file_dir -type f -regex ".*\.\(c\|cpp\)$" | sed "s|$file_dir/||g")
+files=$(find $file_dir -type f \( -name "*.c" -o -name "*.cpp" \) | sed "s|$file_dir/||g")
 
 echo "new files:"
 for i in $files; do
