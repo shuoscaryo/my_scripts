@@ -1,13 +1,22 @@
 #!/bin/bash
 
 if [ $# -ge 1 ]; then
-	file_dir=$(realpath $1)
+	file_dir=$(cd $1; pwd)
+	cd -
 else
 	file_dir=$(pwd)
 fi
 
-curr_dir=$(dirname $0)
-echo $curr_dir
+if [ -h "$0" ]; then
+	script_dir=$(dirname $(readlink "$0"))
+else
+	cd $(dirname $0)
+	script_dir=$(pwd)
+	cd - > /dev/null 2>&1
+fi
+
+echo $script_dir
+
 files=$(find $file_dir -type f -regex ".*\.\(c\|cpp\)$" | sed "s|$file_dir/||g")
 
 echo "new files:"
@@ -15,6 +24,6 @@ for i in $files; do
 	echo -e "\t$i"
 done
 
-make -C $curr_dir > /dev/null 2>&1
+make -C $script_dir > /dev/null 2>&1
 echo "Replacing src in Makefile"
-$curr_dir/replace_src $files
+$script_dir/replace_src $files

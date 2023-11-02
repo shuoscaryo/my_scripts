@@ -3,7 +3,7 @@ NAME := replace_src
 CC := c++
 CFLAGS := -Wall -Wextra -Werror
 
-SRC :=
+SRC := replace_src.cpp
 
 all: $(NAME)
 
