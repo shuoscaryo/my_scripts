@@ -5,7 +5,13 @@ if [ $# -ne 1 ]; then
 	exit 1
 fi
 
-script_dir=$(dirname $(readlink "$0"))
+if [ -h "$0" ]; then
+	script_dir=$(dirname $(readlink "$0"))
+else
+	cd $(dirname $0)
+	script_dir=$(pwd)
+	cd - > /dev/null 2>&1
+fi
 
 for ((i=0; i<=$1; i++)); do
 	mkdir -p "ex0$i"
