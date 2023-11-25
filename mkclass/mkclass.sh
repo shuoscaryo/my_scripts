@@ -1,12 +1,8 @@
 #!/bin/bash
 
 for i in "$@"; do
-	if [[ $i =~ \.hpp$ ]]; then
-		name="$i"
-	else
-		name="$i.hpp"
-	fi
-	classname=${name%.hpp}
+	classname=${i%.*}
+	name=$classname.hpp
 	if [[ -f "$name" ]]; then
 		echo "file $name already exists"
 	else
@@ -28,7 +24,7 @@ class $classname
 
 std::ostream &operator<<(std::ostream &os, const $classname &obj);" >> "$name"
 	fi
-	name2=$(echo "$name" | sed "s/\.hpp$/\.cpp/g")
+	name2=$classname.cpp
 	if [[ -f "$name2" ]]; then
 		echo "file $name2 already exists"
 		continue
