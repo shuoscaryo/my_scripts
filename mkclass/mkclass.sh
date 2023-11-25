@@ -13,6 +13,7 @@ for i in "$@"; do
 		echo "creating file $name"
 		touch "$name"
 		echo "#pragma once
+#include <iostream>
 
 class $classname
 {
@@ -23,7 +24,9 @@ class $classname
 		$classname & operator=(const $classname & rhs);
 	protected:
 	private:
-};" >> "$name"
+};
+
+std::ostream &operator<<(std::ostream &os, const $classname &obj);" >> "$name"
 	fi
 	name2=$(echo "$name" | sed "s/\.hpp$/\.cpp/g")
 	if [[ -f "$name2" ]]; then
@@ -47,13 +50,19 @@ $classname::~$classname(void)
 {
 }
 
-$classname & $classname::operator=(const $classname & rhs)
+$classname &$classname::operator=(const $classname &rhs)
 {
 	if (this != &rhs)
 	{
 		// copy
 	}
 	return (*this);
+}
+
+std::ostream &operator<<(std::ostream &os, const $classname &obj)
+{
+	os << \"stuff\";
+	return (os);
 }" >> "$name2"
 
 done
