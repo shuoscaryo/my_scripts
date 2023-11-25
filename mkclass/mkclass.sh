@@ -57,7 +57,6 @@ $classname &$classname::operator=(const $classname &rhs)
 
 std::ostream &operator<<(std::ostream &os, const $classname &obj)
 {
-	os << \"stuff\";
 	return (os);
 }" >> "$name2"
 
