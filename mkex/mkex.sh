@@ -8,12 +8,11 @@ fi
 if [ -h "$0" ]; then
 	script_dir=$(dirname $(readlink "$0"))
 else
-	cd $(dirname $0)
-	script_dir=$(pwd)
-	cd - > /dev/null 2>&1
+	script_dir=$(cd $(dirname $0) && pwd)
 fi
 
 for ((i=0; i<=$1; i++)); do
 	mkdir -p "ex0$i"
 	cp "$script_dir/Makefile" "ex0$i/"
+	cp "$script_dir/main.cpp" "ex0$i/"
 done
