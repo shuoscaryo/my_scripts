@@ -17,7 +17,7 @@ class $classname
 	public:
 		$classname(void);
 		$classname(const $classname & src);
-		~$classname(void);
+		~$classname();
 		$classname & operator=(const $classname & rhs);
 	protected:
 	private:
@@ -43,7 +43,7 @@ $classname::$classname(const $classname & src)
 	*this = src;
 }
 
-$classname::~$classname(void)
+$classname::~$classname()
 {
 }
 
