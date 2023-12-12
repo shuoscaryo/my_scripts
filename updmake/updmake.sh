@@ -1,9 +1,12 @@
 #!/bin/bash
 
+if ! [ -f "Makefile" ]; then
+	echo "ERROR: No makefile found in current directory."
+	exit 1
+fi
+
 if [ $# -ge 1 ]; then
-	cd $1
-	file_dir=$(pwd)
-	cd - > /dev/null 2>&1
+	file_dir=$(cd $1 && pwd)
 else
 	file_dir=$(pwd)
 fi
@@ -11,9 +14,7 @@ fi
 if [ -h "$0" ]; then
 	script_dir=$(dirname $(readlink "$0"))
 else
-	cd $(dirname $0)
-	script_dir=$(pwd)
-	cd - > /dev/null 2>&1
+	script_dir=$(cd $(dirname $0) && pwd)
 fi
 
 files=$(find $file_dir -type f \( -name "*.c" -o -name "*.cpp" \) | sed "s|$file_dir/||g")
