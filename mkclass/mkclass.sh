@@ -1,13 +1,14 @@
 #!/bin/bash
 
 for i in "$@"; do
-	classname=${i%.*}
-	name=$classname.hpp
-	if [[ -f "$name" ]]; then
-		echo "file $name already exists"
+	filename=${i%.*}
+	classname=$(basename "$filename")
+	headerfile=$filename.hpp
+	if [[ -f "$headerfile" ]]; then
+		echo "file $headerfile already exists"
 	else
-		echo "creating file $name"
-		touch "$name"
+		echo "creating file $headerfile"
+		#touch "$headerfile"
 		echo "#pragma once
 #include <iostream>
 
@@ -22,16 +23,16 @@ class $classname
 	private:
 };
 
-std::ostream &operator<<(std::ostream &os, const $classname &obj);" >> "$name"
+std::ostream &operator<<(std::ostream &os, const $classname &obj);" >> "$headerfile"
 	fi
-	name2=$classname.cpp
-	if [[ -f "$name2" ]]; then
-		echo "file $name2 already exists"
+	srcfile=$filename.cpp
+	if [[ -f "$srcfile" ]]; then
+		echo "file $srcfile already exists"
 		continue
 	fi
-	echo "creating file $name2"
-	touch "$name2"
-	echo "#include \"$name\"
+	echo "creating file $srcfile"
+	#touch "$srcfile"
+	echo "#include \"$classname.hpp\"
 
 $classname::$classname(void)
 {
@@ -58,6 +59,6 @@ $classname &$classname::operator=(const $classname &rhs)
 std::ostream &operator<<(std::ostream &os, const $classname &obj)
 {
 	return (os);
-}" >> "$name2"
+}" >> "$srcfile"
 
 done
