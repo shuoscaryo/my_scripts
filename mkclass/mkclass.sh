@@ -58,6 +58,7 @@ $classname &$classname::operator=(const $classname &rhs)
 
 std::ostream &operator<<(std::ostream &os, const $classname &obj)
 {
+	(void)obj;
 	return (os);
 }" >> "$srcfile"
 
