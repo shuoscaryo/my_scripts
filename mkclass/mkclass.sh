@@ -21,6 +21,8 @@ class $classname
 		$classname & operator=(const $classname & rhs);
 	protected:
 	private:
+
+	//friend std::ostream &operator<<(std::ostream &os, const $classname &obj);
 };
 
 std::ostream &operator<<(std::ostream &os, const $classname &obj);" >> "$headerfile"
