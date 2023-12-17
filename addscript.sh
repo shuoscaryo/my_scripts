@@ -4,6 +4,7 @@
 #Then you can do : addscript script.sh
 
 #This variable can be changed to another path
+
 install_dir=~/.local/bin
 
 if [ $# -ne 1 ]; then
