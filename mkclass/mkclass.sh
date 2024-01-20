@@ -15,14 +15,21 @@ for i in "$@"; do
 class $classname
 {
 	public:
+		// Constructors and destructor
 		$classname(void);
 		$classname(const $classname & src);
 		~$classname();
+
+		// Getters and setters
+		
+		// Member functions
+
+		// Operator overloads
 		$classname & operator=(const $classname & rhs);
 	protected:
 	private:
 
-	//friend std::ostream &operator<<(std::ostream &os, const $classname &obj);
+	friend std::ostream &operator<<(std::ostream &os, const $classname &obj);
 };
 
 std::ostream &operator<<(std::ostream &os, const $classname &obj);" >> "$headerfile"
