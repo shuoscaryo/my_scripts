@@ -20,7 +20,7 @@ class $classname
 		$classname(const $classname & src);
 		~$classname();
 
-		// Getters and setters
+		// Setters and getters
 		
 		// Member functions
 
