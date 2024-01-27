@@ -2,6 +2,8 @@
 
 set -e
 
+# Parse options of command
+# -n: do not execute git add --all
 GITADD=true
 while getopts ":n" opt; do
 	case $opt in
@@ -10,10 +12,12 @@ while getopts ":n" opt; do
 			;;
 		\?)
 			echo "Invalid option: -$OPTARG" >&2
+			exit 1
 			;;
 	esac
 done
-
+# This command shift the index of arguments to ignore the options
+# If it is not used, $* will contain the options
 shift $((OPTIND - 1))
 
 if [ $# -ge 1 ]; then
