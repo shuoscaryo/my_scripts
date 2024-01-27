@@ -5,13 +5,22 @@ set -e
 # Parse options of command
 # -n: do not execute git add --all
 GITADD=true
-while getopts ":n" opt; do
+while getopts ":nh" opt; do
 	case $opt in
 		n)
 			GITADD=false
 			;;
+		h)
+			echo "Usage: quicksave [-n] [message]"
+			echo "  -n: do not execute git add --all"
+			echo "  message: commit message"
+			echo "  If message is not specified, the default message is 'quicksave'"
+			exit 0
+			;;
 		\?)
-			echo "Invalid option: -$OPTARG" >&2
+			echo "Options:"
+			echo "  -n: do not execute git add --all"
+			echo "  -h: show help"
 			exit 1
 			;;
 	esac
