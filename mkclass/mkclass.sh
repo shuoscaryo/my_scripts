@@ -2,11 +2,6 @@
 
 checkResponse()
 {
-	if [ $# -ne 1 ]; then
-		message="Incorrect response, please try again"
-	else
-		message=$1
-	fi
 	while true; do
 		read -r response
 		if [[ $response =~ ^[yY]$ ]]; then
@@ -16,7 +11,6 @@ checkResponse()
 			echo "n"
 			break
 		fi
-		echo $message
 	done
 
 	return 0
@@ -32,7 +26,7 @@ createFile()
 
 	# If the file already exists, ask the user if they want to overwrite it
 	if [[ -f "$1" ]]; then
-		echo "file $1 already exists. Overwrite? (y/n)"
+		echo -e "file $1 already exists. Overwrite? (y/n): \c"
 		if [[ $(checkResponse) == "n" ]]; then
 			return 1
 		fi
