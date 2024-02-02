@@ -11,8 +11,13 @@ else
 	script_dir=$(cd $(dirname $0) && pwd)
 fi
 
-for ((i=0; i<=$1; i++)); do
-	mkdir -p "ex0$i"
-	cp "$script_dir/Makefile" "ex0$i/"
-	cp "$script_dir/main.cpp" "ex0$i/"
+for ((i=0; i < $1; i++)); do
+	folder=ex0$i
+	if [ -e "$folder" ]; then
+		echo "$folder already exists, skipping"
+		continue
+	fi
+	mkdir -p "$folder"
+	cp "$script_dir/Makefile" "$folder"
+	cp "$script_dir/main.cpp" "$folder"
 done
