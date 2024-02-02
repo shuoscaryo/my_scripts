@@ -1,30 +1,73 @@
 #!/bin/bash
 
-for i in "$@"; do
-	filename=${i%.*}
-	classname=$(basename "$filename")
-	headerfile=$filename.hpp
-	if [[ -f "$headerfile" ]]; then
-		echo "file $headerfile already exists"
+checkResponse()
+{
+	if [ $# -ne 1 ]; then
+		message="Incorrect response, please try again"
 	else
-		echo "creating file $headerfile"
-		#touch "$headerfile"
-		echo "#pragma once
+		message=$1
+	fi
+	while true; do
+		read -r response
+		if [[ $response =~ ^[yY]$ ]]; then
+			echo "y"
+			break
+		elif [[ $response =~ ^[nN]$ ]]; then
+			echo "n"
+			break
+		fi
+		echo $message
+	done
+
+	return 0
+}
+
+createFile()
+{
+	# Check number of arguments
+	if [ $# -ne 2 ]; then
+		echo "Usage: createFile filename content"
+		return 1
+	fi
+
+	# If the file already exists, ask the user if they want to overwrite it
+	if [[ -f "$1" ]]; then
+		echo "file $1 already exists. Overwrite? (y/n)"
+		if [[ $(checkResponse) == "n" ]]; then
+			return 1
+		fi
+	fi
+
+	# Create the file
+	echo "Creating file $1"
+	echo "$2" > "$1"
+
+	return 0
+}
+
+# For each argument, create a .hpp and .cpp file with the same name
+for i in "$@"; do
+	# Get the filename without the extension
+	filename=${i%.*}
+	classname=$(basename $filename)
+	# Remove the path from the filename (eg. ./src/ClassName.cpp -> ClassName.cpp)
+	## HEADER FILE CONTENT VARIABLE
+	headercontent="#pragma once
 #include <iostream>
 
 class $classname
 {
 	public:
-		// Constructors and destructor
+	// Constructors and destructor
 		$classname(void);
 		$classname(const $classname & src);
 		~$classname();
 
-		// Setters and getters
+	// Setters and getters
 		
-		// Member functions
+	// Member functions
 
-		// Operator overloads
+	// Operator overloads
 		$classname & operator=(const $classname & rhs);
 	protected:
 	private:
@@ -32,16 +75,10 @@ class $classname
 	friend std::ostream &operator<<(std::ostream &os, const $classname &obj);
 };
 
-std::ostream &operator<<(std::ostream &os, const $classname &obj);" >> "$headerfile"
-	fi
-	srcfile=$filename.cpp
-	if [[ -f "$srcfile" ]]; then
-		echo "file $srcfile already exists"
-		continue
-	fi
-	echo "creating file $srcfile"
-	#touch "$srcfile"
-	echo "#include \"$classname.hpp\"
+std::ostream &operator<<(std::ostream &os, const $classname &obj);"
+
+	## SOURCE FILE CONTENT VARIABLE
+	srccontent="#include \"$classname.hpp\"
 
 $classname::$classname(void)
 {
@@ -69,6 +106,8 @@ std::ostream &operator<<(std::ostream &os, const $classname &obj)
 {
 	(void)obj;
 	return (os);
-}" >> "$srcfile"
+}"
 
+	createFile "$filename.hpp" "$headercontent"
+	createFile "$filename.cpp" "$srccontent"
 done
