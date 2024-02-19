@@ -65,8 +65,12 @@ class $classname
 		$classname & operator=(const $classname & rhs);
 	protected:
 	private:
+	// Atributes
 
-	friend std::ostream &operator<<(std::ostream &os, const $classname &obj);
+	// Private member functions
+
+	// Friends <3
+		friend std::ostream &operator<<(std::ostream &os, const $classname &obj);
 };
 
 std::ostream &operator<<(std::ostream &os, const $classname &obj);"
