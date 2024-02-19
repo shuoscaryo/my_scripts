@@ -63,6 +63,7 @@ class $classname
 
 	// Operator overloads
 		$classname & operator=(const $classname & rhs);
+
 	protected:
 	private:
 	// Atributes
