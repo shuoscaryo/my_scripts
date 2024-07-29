@@ -53,6 +53,7 @@ class $classname
 {
 	public:
 	// Constructors and destructor
+
 		$classname(void);
 		$classname(const $classname & src);
 		~$classname();
@@ -62,6 +63,7 @@ class $classname
 	// Member functions
 
 	// Operator overloads
+
 		$classname & operator=(const $classname & rhs);
 
 	protected:
