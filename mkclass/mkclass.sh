@@ -97,8 +97,9 @@ $classname::~$classname()
 
 $classname &$classname::operator=(const $classname &rhs)
 {
-	// Delete the following line and implement the operator= function!	
+	// Delete the following line and implement the operator= function!
 	throw std::runtime_error(\"Copy constructor of $classname not implemented\");
+	(void)rhs;
 	return (*this);
 }
 
