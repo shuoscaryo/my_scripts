@@ -80,6 +80,7 @@ std::ostream &operator<<(std::ostream &os, const $classname &obj);"
 
 	## SOURCE FILE CONTENT VARIABLE
 	srccontent="#include \"$classname.hpp\"
+#include <stdexcept>
 
 $classname::$classname(void)
 {
@@ -96,10 +97,8 @@ $classname::~$classname()
 
 $classname &$classname::operator=(const $classname &rhs)
 {
-	if (this != &rhs)
-	{
-		// copy
-	}
+	// Delete the following line and implement the operator= function!	
+	throw std::runtime_error(\"Copy constructor of $classname not implemented\");
 	return (*this);
 }
 
