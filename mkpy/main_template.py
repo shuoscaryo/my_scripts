@@ -146,7 +146,7 @@ def _setup_logging(args: argparse.Namespace) -> None:
 
     handlers = []
     if args.log_file:
-        handlers.append(logging.FileHandler(args.log_file, mode="w"))
+        handlers.append(logging.FileHandler(args.log_file, mode="w", encoding="utf-8"))
     else:
         handlers.append(logging.StreamHandler(sys.stderr))
 
