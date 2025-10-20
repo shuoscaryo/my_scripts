@@ -115,7 +115,7 @@ def _parse_args() -> argparse.Namespace:
     # =========================================================================
 
     args = parser.parse_args()
-    return args
+    return parser, args
 
 
 def _setup_logging(args: argparse.Namespace) -> None:
@@ -160,8 +160,10 @@ def _setup_logging(args: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    args = _parse_args()
+    parser, args = _parse_args()
     _setup_logging(args)
+    if not parser.description.strip():
+        logging.warning("Parser has no description.")
     result = _main(args)
     if not isinstance(result, int):
         logging.warning(
