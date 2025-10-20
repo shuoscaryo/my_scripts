@@ -40,6 +40,7 @@
 import argparse
 import logging
 import sys
+import os
 
 # =============================================================================
 # MORE IMPORTS HERE
@@ -74,7 +75,7 @@ def _parse_args() -> argparse.Namespace:
     - None
 
     Returns:
-    - argparse.Namespace: object containing the keys of the program arguments
+    - (argparse.ArgumentParser, argparse.Namespace): the parser and parsed args
 
     Raises:
     - SystemExit: If there is an issue in the parsing. Prints help and closes
@@ -132,7 +133,7 @@ def _setup_logging(args: argparse.Namespace) -> None:
     - None
 
     Raises:
-    - ValueError: if "level_index" is out of range.
+    - ValueError: if "args.log_level" is out of range.
     """
     if not 0 <= args.log_level <= 4:
         raise ValueError("--log-level must be between 0 and 4")
@@ -146,6 +147,7 @@ def _setup_logging(args: argparse.Namespace) -> None:
 
     handlers = []
     if args.log_file:
+        os.makedirs(os.path.dirname(args.log_file) or ".", exist_ok=True)
         handlers.append(logging.FileHandler(args.log_file, mode="w", encoding="utf-8"))
     else:
         handlers.append(logging.StreamHandler(sys.stderr))
