@@ -4,14 +4,33 @@ set -euo pipefail
 usage() {
   cat <<EOF
 Usage: $(basename "$0") [-t TEMPLATE] [-y] TARGET [TARGET ...]
-  -t TEMPLATE   Path to template file (default: main_template.py next to this script)
+  -t TEMPLATE   Path to template file (default: main_template.py next to this script's real path)
   -y            Overwrite without prompting
   -h            Show this help
 
 Notes:
 - If TARGET is a directory, the file name of the template is used inside it.
 - Directories are created as needed.
+- When invoked via a symlink, the template is resolved relative to the real script path.
 EOF
+}
+
+# --- helpers ---
+resolve_realpath() {
+  # Resolve to an absolute, symlink-free path
+  # Prefer realpath, fallback to readlink -f
+  if command -v realpath >/dev/null 2>&1; then
+    realpath "$1"
+  elif command -v readlink >/dev/null 2>&1; then
+    readlink -f "$1"
+  else
+    # Minimal fallback: cd to dirname and print physical pwd + basename
+    # (won't resolve nested symlinks fully if readlink/realpath are missing)
+    local d b
+    d="$(cd -- "$(dirname -- "$1")" && pwd -P)"
+    b="$(basename -- "$1")"
+    printf '%s/%s\n' "$d" "$b"
+  fi
 }
 
 confirm_overwrite() {
@@ -39,17 +58,32 @@ while getopts ":t:yh" opt; do
 done
 shift $((OPTIND-1))
 
+if [[ $# -lt 1 ]]; then
+  usage; exit 1
+fi
+
+# --- script real path (follow symlinks) ---
+SCRIPT_PATH="$(resolve_realpath "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname -- "$SCRIPT_PATH")"
+
 # --- template resolution ---
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-: "${TEMPLATE:="${SCRIPT_DIR}/main_template.py"}"
+if [[ -z "${TEMPLATE}" ]]; then
+  TEMPLATE="${SCRIPT_DIR}/main_template.py"
+else
+  # If user provided a relative -t, interpret it relative to the *real* script dir
+  if [[ "$TEMPLATE" != /* ]]; then
+    TEMPLATE="${SCRIPT_DIR}/$TEMPLATE"
+  fi
+fi
+
+# Try to canonicalize TEMPLATE if it exists
+if [[ -e "$TEMPLATE" ]]; then
+  TEMPLATE="$(resolve_realpath "$TEMPLATE")"
+fi
 
 if [[ ! -f "$TEMPLATE" ]]; then
   echo "Template not found: $TEMPLATE" >&2
   exit 1
-fi
-
-if [[ $# -lt 1 ]]; then
-  usage; exit 1
 fi
 
 # --- copy loop ---

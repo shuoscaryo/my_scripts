@@ -1,17 +1,50 @@
-# ============================================================
-# Base template for Python scripts.
+# =============================================================================
 #
-# Usage:
-# - Can be executed directly as a script (`python myscript.py`)
-# - Or imported as a module to reuse its functions.
+# To know what this script does or what options it has use the flag "-h":
+#     python3 myscript.py -h (it may not be python3 for you)
+# Or just scroll to "parse_args" function and read the description.
+#
+# Template structure:
+#   _main()          → The program starts from here
+#   _parse_args()    → Arguments and explanation go here.
+#   _setup_logging() → configures logging detail and message format (usually no
+#     need to touch it)
 #
 # Conventions:
-# - Functions and variables starting with "_" are considered internal
-#   and should not be imported/used directly.
-# ============================================================
+#   - Functions and variables starting with "_" are internal and should not be
+#       imported elsewhere.
+#   - Specify function args type and return type.
+#   - Double enter between functions.
+#   - Try to keep lines below 80 characters, wrap long ones into multiple
+#       lines.
+#   - Use this docstring to document new functions:
+#       """
+#       Description saying what the function does.
+#       
+#       Args:
+#       - name (type) (optional): Description
+#           More Lines
+#       
+#       Returns:
+#       - type: Description
+#           More Lines
+#       
+#       Raises:
+#       - type: Description
+#           More Lines
+#       """
+#   - _main() should return an integer exit code (0 = success) (default = 0).
+#
+# =============================================================================
 
 import argparse
 import logging
+import sys
+
+# =============================================================================
+# MORE IMPORTS HERE
+
+# =============================================================================
 
 
 def _main(args: argparse.Namespace) -> int:
@@ -20,7 +53,8 @@ def _main(args: argparse.Namespace) -> int:
 
     Args:
     - args (argparse.Namespace): Arguments parsed from the command line.
-        Accesible by key 'args.name'. A key can be modified args.name= 'hello'
+        Accesible by key 'args.example'. A key can be modified.
+        eg. args.name = 'hello'
 
     Returns:
     - int: Exit code (0 = success, other values = error).
@@ -60,8 +94,16 @@ def _parse_args() -> argparse.Namespace:
         metavar = "{0..4}",
         help = "0 = DEBUG, 1 = INFO, 2 = WARNING, 3 = ERROR, 4 = CRITICAL",
     )
+    # Default flag to redirect log messages to a file
+    parser.add_argument(
+        "--log-file",
+        type = str,
+        default = None,
+        help = "Where the logs will be printed (default = stderr)",
+    )
 
-    ### WRITE ARGS HERE
+    # =========================================================================
+    # WRITE ARGS HERE
     # - Positional
     # parser.add_argument("name", type = str, help = "")
     # - Optional
@@ -70,18 +112,21 @@ def _parse_args() -> argparse.Namespace:
     # -- With content "--output file.txt"
     # parser.add_argument('-o', '--output', type = str, help = "")
     ### NO MORE ARGS BELOW THIS
+    # =========================================================================
 
     args = parser.parse_args()
     return args
 
 
-def _setup_logging(level_index: int) -> None:
+def _setup_logging(args: argparse.Namespace) -> None:
     """
     Handles what level to show and the format of the messages while logging.
 
     Args:
-    - level_index (int): Number between 0 and 4 that sets the level of logging
-        0 is to log from DEBUG up to 4 which is only log CRITICAL
+    - args (argparse.Namespace): Arguments parsed from the command line.
+        Expected attributes:
+            - log_level (int): 0 (DEBUG) to 4 (CRITICAL)
+            - log_file (str or None) (optional): path to a log file
 
     Returns:
     - None
@@ -89,8 +134,8 @@ def _setup_logging(level_index: int) -> None:
     Raises:
     - ValueError: if "level_index" is out of range.
     """
-    if not 0 <= level_index <= 4:
-        raise ValueError("level_index must be between 0 and 4")
+    if not 0 <= args.log_level <= 4:
+        raise ValueError("--log-level must be between 0 and 4")
     LEVELS = [
         logging.DEBUG,     # 0
         logging.INFO,      # 1
@@ -98,16 +143,30 @@ def _setup_logging(level_index: int) -> None:
         logging.ERROR,     # 3
         logging.CRITICAL,  # 4
     ]
+
+    handlers = []
+    if args.log_file:
+        handlers.append(logging.FileHandler(args.log_file, mode="w"))
+    else:
+        handlers.append(logging.StreamHandler(sys.stderr))
+
     logging.basicConfig(
-        level=LEVELS[level_index],
-        format="%(asctime)s %(module)s:%(lineno)d | %(levelname)s %(message)s",
+        level=LEVELS[args.log_level],
+        format="%(asctime)s %(levelname)s | %(filename)s:%(lineno)d: %(message)s",
         datefmt="%H:%M:%S",
+        handlers=handlers,
         force=True,
     )
 
 
 if __name__ == "__main__":
     args = _parse_args()
-    _setup_logging(args.log_level)
+    _setup_logging(args)
     result = _main(args)
+    if not isinstance(result, int):
+        logging.warning(
+            f"_main() returned {type(result).__name__}, expected int. "
+            "Using exit code 0."
+        )
+        result = 0
     raise SystemExit(result) # exit code from main to CLI
