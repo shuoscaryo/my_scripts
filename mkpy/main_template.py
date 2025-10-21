@@ -99,8 +99,8 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--log-file",
         type = str,
-        default = None,
-        help = "Where the logs will be printed (default = stderr)",
+        default = "stderr",
+        help = "Where the logs will be printed",
     )
 
     # =========================================================================
@@ -146,11 +146,13 @@ def _setup_logging(args: argparse.Namespace) -> None:
     ]
 
     handlers = []
-    if args.log_file:
+    if args.log_file == "stderr":
+        handlers.append(logging.StreamHandler(sys.stderr))
+    elif args.log_file == "stdout":
+        handlers.append(logging.StreamHandler(sys.stdout))
+    elif args.log_file:
         os.makedirs(os.path.dirname(args.log_file) or ".", exist_ok=True)
         handlers.append(logging.FileHandler(args.log_file, mode="w", encoding="utf-8"))
-    else:
-        handlers.append(logging.StreamHandler(sys.stderr))
 
     logging.basicConfig(
         level=LEVELS[args.log_level],
