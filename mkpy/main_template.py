@@ -14,6 +14,7 @@
 #   - Functions and variables starting with "_" are internal and should not be
 #       imported elsewhere.
 #   - Specify function args type and return type.
+#   - Use "logger" object to print stuff
 #   - Double enter between functions.
 #   - Try to keep lines below 80 characters, wrap long ones into multiple
 #       lines.
@@ -119,7 +120,7 @@ def _parse_args() -> argparse.Namespace:
     return parser, args
 
 
-def _setup_logging(args: argparse.Namespace) -> None:
+def _setup_logger(args: argparse.Namespace) -> None:
     """
     Handles what level to show and the format of the messages while logging.
 
@@ -155,22 +156,26 @@ def _setup_logging(args: argparse.Namespace) -> None:
         handlers.append(logging.FileHandler(args.log_file, mode="w", encoding="utf-8"))
 
     logging.basicConfig(
-        level=LEVELS[args.log_level],
         format="%(asctime)s %(levelname)s | %(filename)s:%(lineno)d: %(message)s",
         datefmt="%H:%M:%S",
         handlers=handlers,
         force=True,
     )
 
+    logger = logging.getLogger(__name__)
+    logger.setLevel(LEVELS[args.log_level])
+
+    return logger
+
 
 if __name__ == "__main__":
     parser, args = _parse_args()
-    _setup_logging(args)
+    logger = _setup_logger(args)
     if not parser.description.strip():
-        logging.warning("Parser has no description.")
+        logger.warning("Parser has no description.")
     result = _main(args)
     if not isinstance(result, int):
-        logging.warning(
+        logger.warning(
             f"_main() returned {type(result).__name__}, expected int. "
             "Using exit code 0."
         )
